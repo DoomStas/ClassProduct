@@ -9,12 +9,12 @@ namespace ClassProduct
     public enum CategoryTyp
     {
         None,
-        fruits,
-        vegetables,
-        dairy,
-        bakery,
-        meat,
-        electronics
+        Fruits,
+        Vegetables,
+        Fairy,
+        Bakery,
+        Meat,
+        Electronics
 
     }
 }

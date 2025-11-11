@@ -8,81 +8,78 @@ namespace ClassProduct
 {
     public class Product
     {
-        private string _name;
-        private CategoryTyp _category;
-        private decimal _price;
-        private int _stockQuantity;
-        private int _discountPercentage;
+        public string Name {get; set;}                   // назва товару
+        public CategoryTyp Category {get;}               // категорія (тільки get)
+        public decimal Price {get; set;}                 // ціна
+        public int Quantity {get; set;}                  // кількість
+        public int Discount {get; set;}
 
         //конструктор
         public Product(string name, CategoryTyp category, decimal price, int stockQuantity, int discountPercentage)
         {
-            _name = name;
-            _category = category;
-            _price = price;
-            _stockQuantity = stockQuantity;
-            _discountPercentage = discountPercentage;
+            Name = name;
+            Category = category;
+            Price = price;
+            Quantity = stockQuantity;
+            Discount = discountPercentage;
 
         }
         //методи
         public decimal GetPriceWithDiscount()
         {
-            decimal discountAmount = (_price * _discountPercentage) / 100;
-            return _price - discountAmount;
+            decimal discountAmount = (Price * Discount) / 100;
+            return Price - discountAmount;
 
         }
-        public decimal TotalValue()
+        public decimal TotalValue
         {
-            return GetPriceWithDiscount() * _stockQuantity;
+           get { return GetPriceWithDiscount() * Quantity; }
         }
         public void Sell(int quantity)
         {
+            string massage;
             if (quantity < 0)
             {
-                Console.WriteLine("Quantity to sell cannot be negative.");
-                return;
+                massage = "Quantity to sell cannot be negative.";
             }
-            if (quantity > _stockQuantity)
+            else if (quantity > Quantity)
             {
-                Console.WriteLine("Not enough stock to complete the sale.");
+                massage = "Not enough stock to complete the sale.";
             }
             else
             {
-                _stockQuantity -= quantity;
-                Console.WriteLine($"Sold {quantity} units of {_name}. Remaining stock: {_stockQuantity}");
+                Quantity -= quantity;
+                massage = $"Sold {quantity} units of {Name}. Remaining stock: {Quantity}";
             }
+            Console.WriteLine(massage);
         }
 
         public void Restock(int quantity)
         {
+            string massage;
             if (quantity > 0)
             {
-                _stockQuantity += quantity;
-                Console.WriteLine($"Restocked {quantity} units of {_name}. New stock: {_stockQuantity}");
+                Quantity += quantity;
+                massage = $"Restocked {quantity} units of {Name}. New stock: {Quantity}";
             }
             else
             {
-                Console.WriteLine("Restock quantity must be positive.");
+                massage = "Restock quantity must be positive.";
             }
+            Console.WriteLine(massage);
         }
-        public void ChangePrice(decimal newPrice)
-        {
-            _price = newPrice;
-            Console.WriteLine($"Price of {_name} changed to: {_price:C}");
-        }
-        public void SetDiscount(int newDiscount)
-        {
-            _discountPercentage = newDiscount;
-            Console.WriteLine($"Discount for {_name} set to: {_discountPercentage}%");
-        }
+       
         public void ShowInfo()
         {
-            Console.WriteLine($" Product Info:\n" +
-                              $"- Name: {_name}\n" +
-                              $"- Category: {_category}\n" +
-                              $"- Price: {_price:C}\n" +
-                              $"- Stock Quantity: {_stockQuantity}\n" +
-                              $"- Discount: {_discountPercentage}%");
+            string info =     ($" Product Info:\n" +
+                              $"- Name: {Name}\n" +
+                              $"- Category: {Category}\n" +
+                              $"- Price: {Price:C}\n" +
+                              $"- Stock Quantity: {Quantity}\n" +
+                              $"- Discount: {Discount}%\n" + 
+                              $"- Price after Discount: {GetPriceWithDiscount():C}\n" +
+                              $"- Total Value in Stock: {TotalValue:C}");
+            Console.WriteLine(info);
         }
     }
 }
