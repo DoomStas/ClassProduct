@@ -14,6 +14,9 @@ namespace ClassProduct
         public int Quantity {get; set;}                  // кількість
         public int Discount {get; set;}
 
+        private string[] reviews;
+        private int reviewCount;
+
         //конструктор
         public Product(string name, CategoryTyp category, decimal price, int stockQuantity, int discountPercentage)
         {
@@ -22,6 +25,8 @@ namespace ClassProduct
             Price = price;
             Quantity = stockQuantity;
             Discount = discountPercentage;
+            reviews = new string[20];
+            reviewCount = 0;
 
         }
         //методи
@@ -35,51 +40,134 @@ namespace ClassProduct
         {
            get { return GetPriceWithDiscount() * Quantity; }
         }
-        public void Sell(int quantity)
+        public string Sell(int quantity)
         {
-            string massage;
+            string message;
             if (quantity < 0)
             {
-                massage = "Quantity to sell cannot be negative.";
+                return "Quantity to sell cannot be negative.";
             }
             else if (quantity > Quantity)
             {
-                massage = "Not enough stock to complete the sale.";
+                return "Not enough stock to complete the sale.";
             }
             else
             {
                 Quantity -= quantity;
-                massage = $"Sold {quantity} units of {Name}. Remaining stock: {Quantity}";
+                return $"Sold {quantity} units of {Name}. Remaining stock: {Quantity}";
             }
-            Console.WriteLine(massage);
+            
         }
 
-        public void Restock(int quantity)
+        public string Restock(int quantity)
         {
-            string massage;
+            
             if (quantity > 0)
             {
                 Quantity += quantity;
-                massage = $"Restocked {quantity} units of {Name}. New stock: {Quantity}";
+                return $"Restocked {quantity} units of {Name}. New stock: {Quantity}";
             }
             else
             {
-                massage = "Restock quantity must be positive.";
+                return "Restock quantity must be positive.";
             }
-            Console.WriteLine(massage);
+           
         }
-       
-        public void ShowInfo()
+
+        private void ResizeReviewsArray()
         {
-            string info =     ($" Product Info:\n" +
+            string[] newReviews = new string[reviews.Length * 2];
+            for (int i = 0; i < reviews.Length; i++)
+            {
+                newReviews[i] = reviews[i];
+            }
+            reviews = newReviews;
+        }
+
+        //create
+        public string AddReview(string review)
+        {
+            if (reviewCount >= reviews.Length)
+            {
+                ResizeReviewsArray();
+
+            }
+            reviews[reviewCount] = review;
+            reviewCount++;
+            return"Review added successfully.";
+
+        }
+
+        //read
+        public string[] ShowReviews()
+        {
+            string[] result = new string[reviewCount];
+            for (int i = 0; i < reviewCount; i++)
+                result[i] = reviews[i];
+
+            return result;
+        }
+
+        //update
+        public string UpdateReview(int index, string newReview)
+        {
+            if (index < 0 || index >= reviewCount)
+            {
+                return"Invalid review index.";
+                
+            }
+            reviews[index] = newReview;
+            return"Review updated successfully.";
+        }
+        //delete
+        public string DeleteReview(int index)
+        {
+            if (index < 0 || index >= reviewCount)
+            {
+                return "Invalid review index.";
+                
+            }
+            for (int i = index; i < reviewCount - 1; i++)
+            {
+                reviews[i] = reviews[i + 1];
+            }
+            reviews[reviewCount - 1] = null;
+            reviewCount--;
+            return "Review deleted successfully.";
+        }
+
+        //index
+        public string this[int index]
+        {
+            get
+            {
+                if (index < 0 || index >= reviewCount)
+                {
+                    return "Invalid review index.";
+                }
+                return reviews[index];
+            }
+            set
+            {
+                if (index < 0 || index >= reviewCount)
+                {
+                    throw new IndexOutOfRangeException("Invalid review index.");
+                }
+                reviews[index] = value;
+            }
+        }
+
+        public string ShowInfo()
+        {
+            return    $" Product Info:\n" +
                               $"- Name: {Name}\n" +
                               $"- Category: {Category}\n" +
                               $"- Price: {Price:C}\n" +
                               $"- Stock Quantity: {Quantity}\n" +
                               $"- Discount: {Discount}%\n" + 
                               $"- Price after Discount: {GetPriceWithDiscount():C}\n" +
-                              $"- Total Value in Stock: {TotalValue:C}");
-            Console.WriteLine(info);
+                              $"- Total Value in Stock: {TotalValue:C}";
+            
         }
     }
 }
