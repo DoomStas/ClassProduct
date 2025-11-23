@@ -8,166 +8,143 @@ namespace ClassProduct
 {
     public class Product
     {
-        public string Name {get; set;}                   // назва товару
-        public CategoryTyp Category {get;}               // категорія (тільки get)
-        public decimal Price {get; set;}                 // ціна
-        public int Quantity {get; set;}                  // кількість
-        public int Discount {get; set;}
+        private string _name;                   // назва товару
+        private CategoryTyp _category;               // категорія (тільки get)
+        private decimal _price;                 // ціна
+        private int _amount;                  // кількість
 
-        private string[] reviews;
-        private int reviewCount;
+        private string[] _reviews;
+        private int _reviewCount;
 
         //конструктор
-        public Product(string name, CategoryTyp category, decimal price, int stockQuantity, int discountPercentage)
+        public Product(string name, CategoryTyp category, decimal price, int amount)
         {
-            Name = name;
-            Category = category;
-            Price = price;
-            Quantity = stockQuantity;
-            Discount = discountPercentage;
-            reviews = new string[20];
-            reviewCount = 0;
+            _name = name;
+            _category = category;
+            _price = price;
+            _amount = amount;
+
+            _reviews = new string[20];
+            _reviewCount = 0;
 
         }
+        //конструктор копіювання
+        public Product(Product other)
+        {
+            _name = other._name;
+            _category = other._category;
+            _price = other._price;
+            _amount = other._amount;
+
+            _reviews = new string[other._reviews.Length];
+            _reviewCount = other._reviewCount;
+
+            for (int i = 0; i < other._reviewCount; i++)
+            {
+                _reviews[i] = other._reviews[i];
+            }
+        }
+
         //методи
-        public decimal GetPriceWithDiscount()
+        public void IncreaseAmount(int value)
         {
-            decimal discountAmount = (Price * Discount) / 100;
-            return Price - discountAmount;
-
+            if (value > 0)
+            {
+                _amount += value;
+            }
         }
-        public decimal TotalValue
+        public void DecreaseAmount(int value)
         {
-           get { return GetPriceWithDiscount() * Quantity; }
+            if (value > 0)
+            {
+                _amount -= value;
+                if (_amount < 0)
+                {
+                    _amount = 0;
+                }
+            }
         }
-        public string Sell(int quantity)
+        public decimal TotalValue()
         {
-            string message;
-            if (quantity < 0)
-            {
-                return "Quantity to sell cannot be negative.";
-            }
-            else if (quantity > Quantity)
-            {
-                return "Not enough stock to complete the sale.";
-            }
-            else
-            {
-                Quantity -= quantity;
-                return $"Sold {quantity} units of {Name}. Remaining stock: {Quantity}";
-            }
-            
+            return _price * _amount;
         }
 
-        public string Restock(int quantity)
+        public void AddReview(string review)
         {
-            
-            if (quantity > 0)
+            if (_reviewCount >= _reviews.Length)
             {
-                Quantity += quantity;
-                return $"Restocked {quantity} units of {Name}. New stock: {Quantity}";
+                string[] tmp = new string[_reviews.Length * 2];
+                for (int i = 0; i < _reviews.Length; i++)
+                {
+                    tmp[i] = _reviews[i];
+                    _reviews = tmp;
+                }
             }
-            else
-            {
-                return "Restock quantity must be positive.";
-            }
-           
+            _reviews[_reviewCount] = review;
+            _reviewCount++;
         }
 
-        private void ResizeReviewsArray()
+        public string[] GetReviews()
         {
-            string[] newReviews = new string[reviews.Length * 2];
-            for (int i = 0; i < reviews.Length; i++)
+            string[] result = new string[_reviewCount];
+            for (int i = 0; i < _reviewCount; i++)
             {
-                newReviews[i] = reviews[i];
+                result[i] = _reviews[i];
             }
-            reviews = newReviews;
-        }
-
-        //create
-        public string AddReview(string review)
-        {
-            if (reviewCount >= reviews.Length)
-            {
-                ResizeReviewsArray();
-
-            }
-            reviews[reviewCount] = review;
-            reviewCount++;
-            return"Review added successfully.";
-
-        }
-
-        //read
-        public string[] ShowReviews()
-        {
-            string[] result = new string[reviewCount];
-            for (int i = 0; i < reviewCount; i++)
-                result[i] = reviews[i];
-
             return result;
         }
 
-        //update
-        public string UpdateReview(int index, string newReview)
+        public bool UpdateReview(int index, string newReview)
         {
-            if (index < 0 || index >= reviewCount)
+            if (index >= 0 && index < _reviewCount)
             {
-                return"Invalid review index.";
-                
+                _reviews[index] = newReview;
+                return true;
             }
-            reviews[index] = newReview;
-            return"Review updated successfully.";
+            return false;
         }
-        //delete
-        public string DeleteReview(int index)
+        public bool DeleteReview(int index)
         {
-            if (index < 0 || index >= reviewCount)
+            if (index >= 0 && index < _reviewCount)
             {
-                return "Invalid review index.";
-                
+                for (int i = index; i < _reviewCount - 1; i++)
+                {
+                    _reviews[i] = _reviews[i + 1];
+                }
+                _reviews[_reviewCount - 1] = null;
+                _reviewCount--;
+                return true;
             }
-            for (int i = index; i < reviewCount - 1; i++)
-            {
-                reviews[i] = reviews[i + 1];
-            }
-            reviews[reviewCount - 1] = null;
-            reviewCount--;
-            return "Review deleted successfully.";
+            return false;
         }
-
-        //index
         public string this[int index]
         {
             get
             {
-                if (index < 0 || index >= reviewCount)
+                if (index < 0 || index >= _reviewCount)
                 {
-                    return "Invalid review index.";
+                    return "";
                 }
-                return reviews[index];
-            }
-            set
-            {
-                if (index < 0 || index >= reviewCount)
-                {
-                    throw new IndexOutOfRangeException("Invalid review index.");
-                }
-                reviews[index] = value;
+                return _reviews[index];
             }
         }
-
-        public string ShowInfo()
+        public string Name
         {
-            return    $" Product Info:\n" +
-                              $"- Name: {Name}\n" +
-                              $"- Category: {Category}\n" +
-                              $"- Price: {Price:C}\n" +
-                              $"- Stock Quantity: {Quantity}\n" +
-                              $"- Discount: {Discount}%\n" + 
-                              $"- Price after Discount: {GetPriceWithDiscount():C}\n" +
-                              $"- Total Value in Stock: {TotalValue:C}";
-            
+            get { return _name; }
+        }
+        public int Amount
+        {
+            get { return _amount; }
+            set { _amount = value; }
+        }
+        public decimal Price
+        {
+            get { return _price; }
+            set { _price = value; }
+        }
+        public CategoryTyp Category
+        {
+            get { return _category; }
         }
     }
 }
