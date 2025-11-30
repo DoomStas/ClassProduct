@@ -83,7 +83,7 @@ namespace ClassProduct
             decimal totalValue = 0;
             for (int i = 0; i < _count; i++)
             {
-                totalValue += _products[i].TotalValue();
+                totalValue += _products[i].GetPrice() * _products[i].Amount;
             }
             return totalValue;
         }

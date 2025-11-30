@@ -146,6 +146,11 @@ namespace ClassProduct
         {
             get { return _category; }
         }
+
+        public virtual decimal GetPrice()
+        {
+            return _price;
+        }
     }
 }
 
