@@ -47,6 +47,15 @@
 
             warehouse.DeleteProduct(2); // Deleting "Cheese"
             Console.WriteLine($"Total amount in warehouse after deletion: {warehouse.GetTotalAmount()}");
+
+            FastPerishableProduct milk = new FastPerishableProduct("Milk", CategoryTyp.Fairy, 10m, 20, 5);
+            Console.WriteLine($"Milk price before decreasing days: {milk.GetPrice()}");
+            milk.DecreaseDays();
+            Console.WriteLine($"Milk price after decreasing days: {milk.GetPrice()}");
+            milk.DecreaseDays(4);
+            Console.WriteLine($"Milk price after decreasing 4 more days: {milk.GetPrice()}");
+            milk.DecreaseDays(10);
+            Console.WriteLine($"Milk price after decreasing 10 more days: {milk.GetPrice()}");
         }
     }
 }

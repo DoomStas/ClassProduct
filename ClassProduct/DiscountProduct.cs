@@ -8,6 +8,7 @@ namespace ClassProduct
 {
     public class DiscountProduct : Product
     {
+
         private decimal _discountPercent;
         public DiscountProduct(string name, CategoryTyp category, decimal price, int amount, decimal discountPercent)
             : base(name, category, price, amount)
